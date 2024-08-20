@@ -20,7 +20,7 @@ local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
 ModVersion = "1.0.0"
-DebugMode = false
+DebugMode = true
 
 LogInfo("Starting mod initialization")
 
