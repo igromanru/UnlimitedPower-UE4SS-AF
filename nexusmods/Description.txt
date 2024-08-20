@@ -42,3 +42,5 @@ But if you want to use it just occasionally, here is the way to keep it disabled
 1. Follow the steps 1. to 2. in the [b]Mod Configuration[/b] section above
 2. In the [b]main.lua[/b] find the line that contains "local IsModEnabled = " and change it's value simply to [b]false[/b].
 [code]local IsModEnabled = false[/code]
+
+[b][url=https://github.com/igromanru/UnlimitedPower_UE4SS_AF]GitHub Page[/url][/b]

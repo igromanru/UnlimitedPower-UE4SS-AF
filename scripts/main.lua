@@ -19,8 +19,8 @@ local ToggleModKeyModifiers = {}
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "1.0.0"
-DebugMode = true
+ModVersion = "1.0.1"
+DebugMode = false
 
 LogInfo("Starting mod initialization")
 
@@ -73,23 +73,16 @@ function BatteryTickHook(Context)
     end
 end
 
-local IsBatteryTickHooked = false
-local function HookBatteryTick()
-    if not IsBatteryTickHooked then
-        RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
-        IsBatteryTickHooked = true
+LoopAsync(2000, function()
+    local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
+    local BatteryTickFunction = StaticFindObject(BatteryTickFuncName)
+    if BatteryTickFunction and BatteryTickFunction:IsValid() then
+        RegisterHook(BatteryTickFuncName, BatteryTickHook)
+        return true
+    else
+        LogDebug("Function BatteryTick doesn't yet exist, hook skipped")
     end
-end
-
--- For hot reload
-if DebugMode then
-    HookBatteryTick()
-end
-
-RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
-    LogDebug("[ClientRestart] called:")
-    HookBatteryTick()
-    LogDebug("------------------------------")
+    return false
 end)
 
 LogInfo("Mod loaded successfully")
