@@ -1,0 +1,38 @@
+[font=Verdana][size=4][b]Description[/b][/size][/font]
+The mod is enabled per default, but can be toggled off/on with the hotkey. Default hotkey is [b]F8[/b], but it can be changed in the [i]main.lua[/i] (see Configuration section below).
+While the mod is active, it sets the charge of all placed batteries to their maximum value and prevents them from being drained.
+
+[font=Verdana][size=4][b]Requirements[/b][/size][/font]
+[size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
+
+[font=Verdana][size=4][b]Manual Installation[/b][/size][/font]
+[size=2]As for now Vortex doesn't support the game, so you have to install the mod manually.[/size]
+1. Download the latest version of RE-UE4SS from it's [url=https://github.com/UE4SS-RE/RE-UE4SS/releases]Release[/url] section. You need the [b]UE4SS_v{version nummber}.zip [/b]
+2. Unzip the content of the zip archive into the following location: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
+[size=2]It should be at the location of the [b]AbioticFactor-Win64-Shipping.exe[/b] !
+For Steam users it might be something like this: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
+3. Now use the [b]Manual Download[/b] button in [i]Files[/i] tab to download the mod as a zip file as well.
+4. Unzip/extract the content of mod's zip ([b]UnlimitedPower[/b] folder) into the directory: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\[/i]
+[size=2]Whole mod path should be like this: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\[/i]
+Steam example: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\
+[/i][/size]5. Done, you can change mod's hotkey, if you want (see below).
+
+[font=Verdana][size=4][b]Mod Configuration[/b][/size][/font]
+Currently the mod has only the option to change the toggle key. Default is [b]F8[/b].
+1. Navigate deep into mods directory to find the [b]main.lua[/b] file.
+[size=2]It should be in: (game root directory)\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\scripts\[/size]
+2. Open the [b]main.lua[/b] with Notepad or any other text editor.
+3. You can modify the [b]ToggleModKey[/b] and [b]ToggleModKeyModifiers[/b] variables.
+[size=2]You can find examples and possible Key and ModifierKey values in the UE4SS documentation.
+See: [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md]Key[/url] and [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md]ModifierKey[/url][/size]
+4. Don't forget to save your changes.
+
+[font=Verdana][size=4][b]How to use[/b][/size][/font]
+[list]
+[*]The mod is enabled per default!
+[*]When you press mod's toggle key (Default F8) the mod will print to game's chat it's new state (Enabled/Disabled).  
+[*]Mod's chat message should only be visible to you. (untested)
+[*]You can toggle the mod any time, even if the chat is not visible.
+[*]While the mod is enabled all batteries placed in the world will be held at maximum charge
+[*]The mod was developed and tested in Singleplayer, but might work if you're the host of the game (untested)[/size].
+[/list]
