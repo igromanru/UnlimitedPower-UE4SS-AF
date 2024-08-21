@@ -7,15 +7,17 @@
 -------------------------------------
 ---------- Configurations -----------
 -------------------------------------
--- Hotkey to toggle the mod on/off --
--- Possible Key: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md
-local ToggleModKey = Key.F8
--- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + L
--- See ModifierKey: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
-local ToggleModKeyModifiers = {}
+-- Possible Key value: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md
+-- ModifierKey alues: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
+-- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + {Key]
+
 ----- Infinite Battery Charge -------
+local InfiniteBatteryChargeKey = Key.F8
+local InfiniteBatteryChargeKeyModifiers = {}
 local InfiniteBatteryCharge = true
 ---- Infinite Held Item Charge ------
+local InfiniteHeldItemChargeKey = Key.F7
+local InfiniteHeldItemChargeKeyModifiers = {}
 local InfiniteHeldItemCharge = true
 -------------------------------------
 
@@ -30,22 +32,40 @@ DebugMode = true
 
 LogInfo("Starting mod initialization")
 
-local IsModEnabled = not DebugMode
-local function SetModState(Enable)
+local IsModEnabled = true
+
+local function SetInfiniteBatteryChargeState(Enable)
     ExecuteInGameThread(function()
         Enable = Enable or false
-        IsModEnabled = Enable
+        InfiniteBatteryCharge = Enable
         local state = "Disabled"
-        if IsModEnabled then
+        if InfiniteBatteryCharge then
             state = "Enabled"
         end
-        LogInfo("Mod state changed to: " .. state)
-        AFUtils.ModDisplayTextChatMessage(state)
+        LogInfo("Infinite Battery Charge state changed to: " .. state)
+        AFUtils.ModDisplayTextChatMessage("Infinite Battery Charge: " .. state)
     end)
 end
 
-RegisterKeyBind(ToggleModKey, ToggleModKeyModifiers, function()
-    SetModState(not IsModEnabled)
+RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
+    SetInfiniteBatteryChargeState(not InfiniteBatteryCharge)
+end)
+
+local function SetInfiniteHeldItemChargeState(Enable)
+    ExecuteInGameThread(function()
+        Enable = Enable or false
+        InfiniteHeldItemCharge = Enable
+        local state = "Disabled"
+        if InfiniteHeldItemCharge then
+            state = "Enabled"
+        end
+        LogInfo("Infinite Held Item Charge state changed to: " .. state)
+        AFUtils.ModDisplayTextChatMessage("Infinite Held Item Charge: " .. state)
+    end)
+end
+
+RegisterKeyBind(InfiniteHeldItemChargeKey, InfiniteHeldItemChargeKeyModifiers, function()
+    SetInfiniteHeldItemChargeState(not InfiniteHeldItemCharge)
 end)
 
 local WasModEnabled = false
@@ -54,23 +74,23 @@ function BatteryTickHook(Context)
 
     if IsModEnabled and InfiniteBatteryCharge then
         WasModEnabled = true
-        LogDebug("[BatteryTick] called:")
+        -- LogDebug("[BatteryTick] called:")
         if this.ChangeableData then
             local liquidType = this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
             local liquidLevel = this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
-            LogDebug("Liquid type: " .. liquidType)
-            LogDebug("LiquidLevel: " .. liquidLevel)
+            -- LogDebug("Liquid type: " .. liquidType)
+            -- LogDebug("LiquidLevel: " .. liquidLevel)
             if liquidType == 0 or liquidLevel < this.MaxBattery then
                 this.FreezeBatteryDrain = true
                 this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Power
                 this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = this.MaxBattery
-                LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-                LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                -- LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+                -- LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
             end
         else
             LogInfo("Warning: ChangeableData isn't valid!")
         end
-        LogDebug("------------------------------")
+        -- LogDebug("------------------------------")
     elseif WasModEnabled and this.FreezeBatteryDrain == true then
         LogDebug("[BatteryTick] called:")
         LogDebug("FreezeBatteryDrain was enabled, turning off")
@@ -108,18 +128,18 @@ local function TryHookBatteryTick()
         if BatteryTickFunction and BatteryTickFunction:IsValid() then
             RegisterHook(BatteryTickFuncName, BatteryTickHook)
             IsBatteryTickHooked = true
-        else
-            LogDebug("TryHookBatteryTick: Function BatteryTick doesn't yet exist, hook skipped")
+        -- else
+        --     LogDebug("TryHookBatteryTick: Function BatteryTick doesn't yet exist, hook skipped")
         end
     end
     return IsBatteryTickHooked
 end
 
 -- For hot reload
-if DebugMode then
-    HookGetCurrentHeldItem()
-    TryHookBatteryTick()
-end
+-- if DebugMode then
+--     HookGetCurrentHeldItem()
+--     TryHookBatteryTick()
+-- end
 
 RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
     LogDebug("[ClientRestart] called:")
