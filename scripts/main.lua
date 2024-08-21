@@ -74,23 +74,22 @@ function BatteryTickHook(Context)
 
     if IsModEnabled and InfiniteBatteryCharge then
         WasModEnabled = true
-        -- LogDebug("[BatteryTick] called:")
         if this.ChangeableData then
             local liquidType = this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
             local liquidLevel = this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
-            -- LogDebug("Liquid type: " .. liquidType)
-            -- LogDebug("LiquidLevel: " .. liquidLevel)
             if liquidType == 0 or liquidLevel < this.MaxBattery then
                 this.FreezeBatteryDrain = true
                 this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Power
                 this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = this.MaxBattery
-                -- LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-                -- LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                LogDebug("[BatteryTick] called:")
+                LogDebug("Liquid type: " .. liquidType)
+                LogDebug("LiquidLevel: " .. liquidLevel)
+                LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+                LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                LogDebug("FreezeBatteryDrain: " .. tostring(this.FreezeBatteryDrain))
+                LogDebug("------------------------------")
             end
-        else
-            LogInfo("Warning: ChangeableData isn't valid!")
         end
-        -- LogDebug("------------------------------")
     elseif WasModEnabled and this.FreezeBatteryDrain == true then
         LogDebug("[BatteryTick] called:")
         LogDebug("FreezeBatteryDrain was enabled, turning off")
@@ -136,10 +135,10 @@ local function TryHookBatteryTick()
 end
 
 -- For hot reload
--- if DebugMode then
---     HookGetCurrentHeldItem()
---     TryHookBatteryTick()
--- end
+if DebugMode then
+    HookGetCurrentHeldItem()
+    TryHookBatteryTick()
+end
 
 RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
     LogDebug("[ClientRestart] called:")
