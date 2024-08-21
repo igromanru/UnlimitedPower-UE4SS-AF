@@ -34,7 +34,7 @@ See: [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-defi
 [*]Mod's chat message should only be visible to you. (untested)
 [*]You can toggle the mod any time, even if the chat is not visible.
 [*]While the mod is enabled all batteries placed in the world will be held at maximum charge
-[*]The mod was developed and tested in Singleplayer, but might work if you're the host of the game (untested)[/size].
+[*]The mod was developed and tested in Singleplayer, but might work if you're the host of the game (untested)
 [/list]
 [font=Verdana][size=4][b]Start the mod disabled[/b][/size][/font]
 [size=2]My idea was that anyone who wants to use the mod doesn't want to forget to turn it on during the game and then be left with empty batteries in a fight.

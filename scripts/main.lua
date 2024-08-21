@@ -19,8 +19,8 @@ local ToggleModKeyModifiers = {}
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "1.0.1"
-DebugMode = false
+ModVersion = "1.1.0"
+DebugMode = true
 
 LogInfo("Starting mod initialization")
 
@@ -73,16 +73,53 @@ function BatteryTickHook(Context)
     end
 end
 
-LoopAsync(2000, function()
-    local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
-    local BatteryTickFunction = StaticFindObject(BatteryTickFuncName)
-    if BatteryTickFunction and BatteryTickFunction:IsValid() then
-        RegisterHook(BatteryTickFuncName, BatteryTickHook)
-        return true
-    else
-        LogDebug("Function BatteryTick doesn't yet exist, hook skipped")
+local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, Blueprint)
+    local this = Context:get()
+    local success = Success:get()
+    local blueprint = Blueprint:get()
+
+    if IsModEnabled and success then
+        local myPlayer = AFUtils.GetMyPlayer()
+        if myPlayer and myPlayer:GetAddress() == this:GetAddress() then
+            AFUtils.SetItemLiquidLevel(blueprint)
+        end
     end
-    return false
+end
+
+local IsGetCurrentHeldItemHooked = false
+local function HookGetCurrentHeldItem()
+    if not IsGetCurrentHeldItemHooked then
+        RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:GetCurrentHeldItem", GetCurrentHeldItemHook)
+        IsGetCurrentHeldItemHooked = true
+    end
+end
+
+local IsBatteryTickHooked = false
+local function TryHookBatteryTick()
+    if not IsBatteryTickHooked then
+        local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
+        local BatteryTickFunction = StaticFindObject(BatteryTickFuncName)
+        if BatteryTickFunction and BatteryTickFunction:IsValid() then
+            RegisterHook(BatteryTickFuncName, BatteryTickHook)
+            IsBatteryTickHooked = true
+        else
+            LogDebug("Function BatteryTick doesn't yet exist, hook skipped")
+        end
+    end
+    return IsBatteryTickHooked
+end
+
+-- For hot reload
+if DebugMode then
+    HookGetCurrentHeldItem()
+    TryHookBatteryTick()
+end
+
+RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
+    LogDebug("[ClientRestart] called:")
+    HookGetCurrentHeldItem()
+    LoopAsync(2000, TryHookBatteryTick)
+    LogDebug("------------------------------")
 end)
 
 LogInfo("Mod loaded successfully")
