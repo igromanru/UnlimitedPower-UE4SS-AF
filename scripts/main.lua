@@ -5,12 +5,18 @@
 ]]
 
 -------------------------------------
+---------- Configurations -----------
+-------------------------------------
 -- Hotkey to toggle the mod on/off --
--- Possible keys: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md
+-- Possible Key: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md
 local ToggleModKey = Key.F8
--- See ModifierKey: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
 -- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + L
+-- See ModifierKey: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
 local ToggleModKeyModifiers = {}
+----- Infinite Battery Charge -------
+local InfiniteBatteryCharge = true
+---- Infinite Held Item Charge ------
+local InfiniteHeldItemCharge = true
 -------------------------------------
 
 ------------------------------
@@ -46,7 +52,7 @@ local WasModEnabled = false
 function BatteryTickHook(Context)
     local this = Context:get()
 
-    if IsModEnabled then
+    if IsModEnabled and InfiniteBatteryCharge then
         WasModEnabled = true
         LogDebug("[BatteryTick] called:")
         if this.ChangeableData then
@@ -78,10 +84,10 @@ local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, 
     local success = Success:get()
     local blueprint = Blueprint:get()
 
-    if IsModEnabled and success then
+    if success and IsModEnabled and InfiniteHeldItemCharge then
         local myPlayer = AFUtils.GetMyPlayer()
         if myPlayer and myPlayer:GetAddress() == this:GetAddress() then
-            AFUtils.SetItemLiquidLevel(blueprint)
+            AFUtils.SetItemLiquidLevel(blueprint, AFUtils.LiquidType.Power)
         end
     end
 end
@@ -103,7 +109,7 @@ local function TryHookBatteryTick()
             RegisterHook(BatteryTickFuncName, BatteryTickHook)
             IsBatteryTickHooked = true
         else
-            LogDebug("Function BatteryTick doesn't yet exist, hook skipped")
+            LogDebug("TryHookBatteryTick: Function BatteryTick doesn't yet exist, hook skipped")
         end
     end
     return IsBatteryTickHooked
