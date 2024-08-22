@@ -27,8 +27,8 @@ local InfiniteHeldItemCharge = true
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "1.1.0"
-DebugMode = true
+ModVersion = "2.0.0"
+DebugMode = false
 
 LogInfo("Starting mod initialization")
 
