@@ -68,48 +68,67 @@ RegisterKeyBind(InfiniteHeldItemChargeKey, InfiniteHeldItemChargeKeyModifiers, f
     SetInfiniteHeldItemChargeState(not InfiniteHeldItemCharge)
 end)
 
-local WasModEnabled = false
-function BatteryTickHook(Context)
-    local this = Context:get()
-
-    if IsModEnabled and InfiniteBatteryCharge then
-        WasModEnabled = true
-        if this.ChangeableData then
-            local liquidType = this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
-            local liquidLevel = this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
-            if liquidType == 0 or liquidLevel < this.MaxBattery then
-                this.FreezeBatteryDrain = true
-                this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Power
-                this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = this.MaxBattery
-                LogDebug("[BatteryTick] called:")
-                LogDebug("Liquid type: " .. liquidType)
-                LogDebug("LiquidLevel: " .. liquidLevel)
-                LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-                LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
-                LogDebug("FreezeBatteryDrain: " .. tostring(this.FreezeBatteryDrain))
-                LogDebug("------------------------------")
-            end
-        end
-    elseif WasModEnabled and this.FreezeBatteryDrain == true then
-        LogDebug("[BatteryTick] called:")
-        LogDebug("FreezeBatteryDrain was enabled, turning off")
-        this.FreezeBatteryDrain = false
-        LogDebug("------------------------------")
-    end
-end
-
 local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, Blueprint)
-    local this = Context:get()
+    local playerCharacter = Context:get()
     local success = Success:get()
-    local blueprint = Blueprint:get()
+    -- local itemSlotInfo = ItemSlotInfo:get()
+    -- local itemData = ItemData:get()
+    local blueprint = Blueprint:get() -- AAbiotic_Item_ParentBP_C
 
     if success and IsModEnabled and InfiniteHeldItemCharge then
         local myPlayer = AFUtils.GetMyPlayer()
-        if myPlayer and myPlayer:GetAddress() == this:GetAddress() then
-            AFUtils.SetItemLiquidLevel(blueprint, AFUtils.LiquidType.Power)
+        if myPlayer and myPlayer:GetAddress() == playerCharacter:GetAddress() then
+            if AFUtils.SetItemLiquidLevel(blueprint, AFUtils.LiquidType.Power) then
+                local inventory = playerCharacter.CurrentHotbarSlotSelected.Inventory_2_B69CD60741EFD551F09ED5AFF44B1E46
+                local slotIndex = playerCharacter.CurrentHotbarSlotSelected.Index_5_6BDC7B3944A5DE0B319F9FA20720872F
+                -- LogDebug("CurrentHotbarSlotSelected.Index: " .. slotIndex)
+                if inventory:IsValid() and inventory.CurrentInventory and #inventory.CurrentInventory > slotIndex then
+                    local luaIndex = slotIndex + 1
+                    -- LogDebug("Lua index: " .. luaIndex)
+                    -- LogDebug("CurrentInventory:GetArrayNum: " .. #inventory.CurrentInventory)
+                    local inventoryItemSlotStruct = inventory.CurrentInventory[luaIndex]
+                    if inventoryItemSlotStruct:IsValid() then
+                        local itemDataTable = inventoryItemSlotStruct.ItemDataTable_18_BF1052F141F66A976F4844AB2B13062B
+                        if itemDataTable.RowName and itemDataTable.RowName:GetComparisonIndex() > 0 then
+                            -- LogDebug("InventoryItemSlotStruct.RowName: " .. itemDataTable.RowName:ToString())
+                            -- LogDebug("InventoryItemSlotStruct.ChangeableData.LiquidLevel: " .. inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                            -- LogDebug("InventoryItemSlotStruct.ChangeableData.CurrentLiquid: " .. inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+                            inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = blueprint.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
+                            inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = blueprint.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
+                            -- LogDebug("New LiquidLevel: " .. inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                            -- LogDebug("New CurrentLiquid: " .. inventoryItemSlotStruct.ChangeableData_12_2B90E1F74F648135579D39A49F5A2313.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+                        end
+                    end
+                end
+            end
         end
     end
 end
+
+local function BatteryTickHook(Context)
+    local this = Context:get()
+
+    if IsModEnabled and InfiniteBatteryCharge and this.ChangeableData then
+        local liquidType = this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
+        local liquidLevel = this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
+        if liquidType == 0 or not this.FreezeBatteryDrain or liquidLevel < this.MaxBattery then
+            this.FreezeBatteryDrain = true
+            this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Power
+            this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = this.MaxBattery
+            
+            -- this["Update Current Item Data"]()
+
+            -- LogDebug("[BatteryTick] called:")
+            -- LogDebug("Liquid type: " .. liquidType)
+            -- LogDebug("LiquidLevel: " .. liquidLevel)
+            -- LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+            -- LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+            -- LogDebug("FreezeBatteryDrain: " .. tostring(this.FreezeBatteryDrain))
+            -- LogDebug("------------------------------")
+        end
+    end
+end
+
 
 local IsGetCurrentHeldItemHooked = false
 local function HookGetCurrentHeldItem()
