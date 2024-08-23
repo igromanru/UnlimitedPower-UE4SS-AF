@@ -50,6 +50,16 @@ local InfiniteHeldItemCharge = false[/code]
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
 [*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested
 [/list]
+[font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
+[size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
+1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
+[size=2]e.g. [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
+2. Open [b]UE4SS-settings.ini[/b] with any text editor.
+3. Find following entries and change them as following:
+[code]bUseUObjectArrayCache = false
+GuiConsoleEnabled = 0[/code]
+4. Save the file.
+[size=2]If you still experience performance issues, write a detailed comment what happens, your PC specs and which mods you use.[/size]
 
 [font=Verdana][size=4][b]Known Issues[/b][/size][/font]
 Current UE4SS version works well with the game, but it has of a problem that causes the game to crash when you exit it.
