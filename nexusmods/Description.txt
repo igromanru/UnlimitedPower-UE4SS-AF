@@ -14,7 +14,7 @@ See the [b]Mod Configuration[/b] section below for details how to change hotkeys
 
 [font=Verdana][size=4][b]Manual Installation[/b][/size][/font]
 [size=2]As for now Vortex doesn't support the game, so you have to install the mod manually.[/size]
-1. Download the latest version of RE-UE4SS from it's [url=https://github.com/UE4SS-RE/RE-UE4SS/releases]Release[/url] section. You need the [b]UE4SS_v{version nummber}.zip [/b]
+1. Download the latest version of RE-UE4SS from it's [url=https://github.com/UE4SS-RE/RE-UE4SS/releases]Release[/url] section. You need the [b]UE4SS_v{version nummber}.zip[/b] (e.g. UE4SS_v3.0.1.zip)
 2. Unzip the content of the zip archive into the following location: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
 [size=2]It should be at the location of the [b]AbioticFactor-Win64-Shipping.exe[/b] !
 For Steam users it might be something like this: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
@@ -50,5 +50,10 @@ local InfiniteHeldItemCharge = false[/code]
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
 [*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested
 [/list]
+
+[font=Verdana][size=4][b]Known Issues[/b][/size][/font]
+Current UE4SS version works well with the game, but it has of a problem that causes the game to crash when you exit it.
+It has nothing to do with the mod and it has no negative impact on the game or your save file, it's just a bit annoying.
+And you might want to delete crash dump ([b].dmp[/b]) files from time to time from your game directory.
 
 [b][url=https://github.com/igromanru/UnlimitedPower_UE4SS_AF]GitHub Page[/url][/b]
