@@ -9,6 +9,10 @@ Second feature, your currently held item (selected item in hotbar) becomes fully
 Both features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b] while the Infinite Held Item Charge it togglebar with [b]F7[/b].
 See the [b]Mod Configuration[/b] section below for details how to change hotkeys and disable features per default.
 
+[font=Verdana][size=4][b]Hints[/b][/size][/font]
+[list][*]The changed batteries charge isn't instantly visible, it might take a while until game updates the visuals. You can pick up the battery to see that it's full.
+[*]When Held Item is drained, the mod will try to replenish it with best allowed energy. If it's allowed it will be filled with laser energy.[/list]
+
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
 [size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
 
@@ -42,14 +46,13 @@ local InfiniteHeldItemCharge = false[/code]
 4. Don't forget to save your changes!
 
 [font=Verdana][size=4][b]How to use[/b][/size][/font]
-[list]
-[*]The mod is enabled per default!
+[list][*]The mod is enabled per default!
 [*]You can press toggle key F8 (default key) to Disable/Enable Infinite Battery Charge,
 [*]Toggle key F7 (default key) to Disable/Enable Infinite Held Item Charge
 [*]Changed state of each feature will be printed to the game's chat. But it should be only visible to you.
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
-[*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested
-[/list]
+[*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested[/list]
+
 [font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
 [size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
 1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
