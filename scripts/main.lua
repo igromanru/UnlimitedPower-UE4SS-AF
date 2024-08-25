@@ -14,11 +14,11 @@
 ----- Infinite Battery Charge -------
 local InfiniteBatteryChargeKey = Key.F8
 local InfiniteBatteryChargeKeyModifiers = {}
-local InfiniteBatteryCharge = false
+local InfiniteBatteryCharge = true
 ---- Infinite Held Item Charge ------
 local InfiniteHeldItemChargeKey = Key.F7
 local InfiniteHeldItemChargeKeyModifiers = {}
-local InfiniteHeldItemCharge = false
+local InfiniteHeldItemCharge = true
 -------------------------------------
 
 ------------------------------
@@ -39,11 +39,15 @@ local function SetInfiniteBatteryChargeState(Enable)
         Enable = Enable or false
         InfiniteBatteryCharge = Enable
         local state = "Disabled"
+        local warningColor =  AFUtils.CriticalityLevels.Red
         if InfiniteBatteryCharge then
             state = "Enabled"
+            warningColor =  AFUtils.CriticalityLevels.Green
         end
-        LogInfo("Infinite Battery Charge state changed to: " .. state)
-        AFUtils.ModDisplayTextChatMessage("Infinite Battery Charge: " .. state)
+        local stateMessage = "Infinite Battery Charge: " .. state
+        LogInfo(stateMessage)
+        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
 
@@ -56,11 +60,15 @@ local function SetInfiniteHeldItemChargeState(Enable)
         Enable = Enable or false
         InfiniteHeldItemCharge = Enable
         local state = "Disabled"
+        local warningColor =  AFUtils.CriticalityLevels.Red
         if InfiniteHeldItemCharge then
             state = "Enabled"
+            warningColor =  AFUtils.CriticalityLevels.Green
         end
-        LogInfo("Infinite Held Item Charge state changed to: " .. state)
-        AFUtils.ModDisplayTextChatMessage("Infinite Held Item Charge: " .. state)
+        local stateMessage = "Infinite Held Item Charge: " .. state
+        LogInfo(stateMessage)
+        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
 
@@ -137,6 +145,8 @@ end
 
 -- For hot reload
 if DebugMode then
+    InfiniteBatteryCharge = false
+    InfiniteHeldItemCharge = false
     HookGetCurrentHeldItem()
     TryHookBatteryTick()
 end
