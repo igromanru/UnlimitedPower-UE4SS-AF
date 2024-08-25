@@ -15,10 +15,12 @@
 local InfiniteBatteryChargeKey = Key.F8
 local InfiniteBatteryChargeKeyModifiers = {}
 local InfiniteBatteryCharge = true
----- Infinite Held Item Charge ------
-local InfiniteHeldItemChargeKey = Key.F7
-local InfiniteHeldItemChargeKeyModifiers = {}
-local InfiniteHeldItemCharge = true
+---- Infinite Gear Charge ------
+local InfiniteGearChargeKey = Key.F7
+local InfiniteGearChargeKeyModifiers = {}
+local InfiniteGearCharge = true
+-- If set to true, only the Held Item will be charged, otherwise Held Item and ALL equipped gear
+local ApplyToHeldItemOnly = false
 -------------------------------------
 
 ------------------------------
@@ -27,71 +29,29 @@ local InfiniteHeldItemCharge = true
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.1.0"
-DebugMode = false
+ModVersion = "2.2.0"
+DebugMode = true
 
 LogInfo("Starting mod initialization")
 
 local IsModEnabled = true
 
-local function SetInfiniteBatteryChargeState(Enable)
-    ExecuteInGameThread(function()
-        Enable = Enable or false
-        InfiniteBatteryCharge = Enable
-        local state = "Disabled"
-        local warningColor =  AFUtils.CriticalityLevels.Red
-        if InfiniteBatteryCharge then
-            state = "Enabled"
-            warningColor =  AFUtils.CriticalityLevels.Green
-        end
-        local stateMessage = "Infinite Battery Charge: " .. state
-        LogInfo(stateMessage)
-        AFUtils.ModDisplayTextChatMessage(stateMessage)
-        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
-    end)
-end
+-- local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, Blueprint)
+--     local playerCharacter = Context:get()
+--     local success = Success:get()
+--     -- local itemSlotInfo = ItemSlotInfo:get()
+--     -- local itemData = ItemData:get()
+--     -- local blueprint = Blueprint:get()
 
-RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
-    SetInfiniteBatteryChargeState(not InfiniteBatteryCharge)
-end)
+--     LogDebug("GetCurrentHeldItem.Success: " .. tostring(success))
 
-local function SetInfiniteHeldItemChargeState(Enable)
-    ExecuteInGameThread(function()
-        Enable = Enable or false
-        InfiniteHeldItemCharge = Enable
-        local state = "Disabled"
-        local warningColor =  AFUtils.CriticalityLevels.Red
-        if InfiniteHeldItemCharge then
-            state = "Enabled"
-            warningColor =  AFUtils.CriticalityLevels.Green
-        end
-        local stateMessage = "Infinite Held Item Charge: " .. state
-        LogInfo(stateMessage)
-        AFUtils.ModDisplayTextChatMessage(stateMessage)
-        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
-    end)
-end
-
-RegisterKeyBind(InfiniteHeldItemChargeKey, InfiniteHeldItemChargeKeyModifiers, function()
-    SetInfiniteHeldItemChargeState(not InfiniteHeldItemCharge)
-end)
-
----@param Context AAbiotic_PlayerCharacter_C
----@param Success boolean
----@param ItemSlotInfo FAbiotic_InventoryItemSlotStruct
----@param ItemData FAbiotic_InventoryItemStruct
----@param Blueprint AAbiotic_Item_ParentBP_C
-local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, Blueprint)
-    local playerCharacter = Context:get()
-    local success = Success:get()
-    -- local itemSlotInfo = ItemSlotInfo:get()
-    -- local itemData = ItemData:get()
-    -- local blueprint = Blueprint:get()
-
-    if success and IsModEnabled and InfiniteHeldItemCharge then
-        AFUtils.FillHeldItemWithEnergy(playerCharacter)
-    end
-end
+--     if IsModEnabled and InfiniteGearCharge then
+--         AFUtils.FillHeldItemWithEnergy(playerCharacter)
+--         if not ApplyToHeldItemOnly then
+--             AFUtils.FillAllEquippedItemsWithEnergy(playerCharacter)
+--         end
+--     end
+-- end
 
 local function BatteryTickHook(Context)
     local deployedBattery = Context:get()
@@ -120,13 +80,13 @@ local function BatteryTickHook(Context)
 end
 
 
-local IsGetCurrentHeldItemHooked = false
-local function HookGetCurrentHeldItem()
-    if not IsGetCurrentHeldItemHooked then
-        RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:GetCurrentHeldItem", GetCurrentHeldItemHook)
-        IsGetCurrentHeldItemHooked = true
-    end
-end
+-- local IsGetCurrentHeldItemHooked = false
+-- local function HookGetCurrentHeldItem()
+--     if not IsGetCurrentHeldItemHooked then
+--         RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:GetCurrentHeldItem", GetCurrentHeldItemHook)
+--         IsGetCurrentHeldItemHooked = true
+--     end
+-- end
 
 local IsBatteryTickHooked = false
 local function TryHookBatteryTick()
@@ -146,16 +106,76 @@ end
 -- For hot reload
 if DebugMode then
     InfiniteBatteryCharge = false
-    InfiniteHeldItemCharge = false
-    HookGetCurrentHeldItem()
+    InfiniteGearCharge = false
+    -- HookGetCurrentHeldItem()
     TryHookBatteryTick()
 end
 
-RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
-    LogDebug("[ClientRestart] called:")
-    HookGetCurrentHeldItem()
-    LoopAsync(2000, TryHookBatteryTick)
-    LogDebug("------------------------------")
+LoopAsync(500, function()
+    if IsModEnabled then
+        TryHookBatteryTick()
+        if InfiniteGearCharge then
+            ExecuteInGameThread(function()
+                local myPlayer = AFUtils.GetMyPlayer()
+                if myPlayer then
+                    AFUtils.FillHeldItemWithEnergy(myPlayer)
+                    if not ApplyToHeldItemOnly then
+                        AFUtils.FillAllEquippedItemsWithEnergy(myPlayer)
+                    end
+                end
+            end)
+        end
+    end
+    return false
+end)
+
+-- RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
+--     LogDebug("[ClientRestart] called:")
+--     HookGetCurrentHeldItem()
+--     LoopAsync(2000, TryHookBatteryTick)
+--     LogDebug("------------------------------")
+-- end)
+
+local function SetInfiniteBatteryChargeState(Enable)
+    ExecuteInGameThread(function()
+        Enable = Enable or false
+        InfiniteBatteryCharge = Enable
+        local state = "Disabled"
+        local warningColor =  AFUtils.CriticalityLevels.Red
+        if InfiniteBatteryCharge then
+            state = "Enabled"
+            warningColor =  AFUtils.CriticalityLevels.Green
+        end
+        local stateMessage = "Infinite Battery Charge: " .. state
+        LogInfo(stateMessage)
+        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+    end)
+end
+
+RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
+    SetInfiniteBatteryChargeState(not InfiniteBatteryCharge)
+end)
+
+local function SetInfiniteGearChargeState(Enable)
+    ExecuteInGameThread(function()
+        Enable = Enable or false
+        InfiniteGearCharge = Enable
+        local state = "Disabled"
+        local warningColor =  AFUtils.CriticalityLevels.Red
+        if InfiniteGearCharge then
+            state = "Enabled"
+            warningColor =  AFUtils.CriticalityLevels.Green
+        end
+        local stateMessage = "Infinite Gear Charge: " .. state
+        LogInfo(stateMessage)
+        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+    end)
+end
+
+RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
+    SetInfiniteGearChargeState(not InfiniteGearCharge)
 end)
 
 LogInfo("Mod loaded successfully")
