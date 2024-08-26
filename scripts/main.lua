@@ -19,7 +19,7 @@ local InfiniteBatteryCharge = true
 local InfiniteGearChargeKey = Key.F7
 local InfiniteGearChargeKeyModifiers = {}
 local InfiniteGearCharge = true
--- If set to true, only the Held Item will be charged, otherwise Held Item and ALL equipped gear
+-- If set to true only the Held Item will be charged, otherwise Held Item and equipped gear
 local ApplyToHeldItemOnly = false
 -------------------------------------
 
@@ -35,23 +35,6 @@ DebugMode = true
 LogInfo("Starting mod initialization")
 
 local IsModEnabled = true
-
--- local function GetCurrentHeldItemHook(Context, Success, ItemSlotInfo, ItemData, Blueprint)
---     local playerCharacter = Context:get()
---     local success = Success:get()
---     -- local itemSlotInfo = ItemSlotInfo:get()
---     -- local itemData = ItemData:get()
---     -- local blueprint = Blueprint:get()
-
---     LogDebug("GetCurrentHeldItem.Success: " .. tostring(success))
-
---     if IsModEnabled and InfiniteGearCharge then
---         AFUtils.FillHeldItemWithEnergy(playerCharacter)
---         if not ApplyToHeldItemOnly then
---             AFUtils.FillAllEquippedItemsWithEnergy(playerCharacter)
---         end
---     end
--- end
 
 local function BatteryTickHook(Context)
     local deployedBattery = Context:get()
@@ -79,15 +62,6 @@ local function BatteryTickHook(Context)
     end
 end
 
-
--- local IsGetCurrentHeldItemHooked = false
--- local function HookGetCurrentHeldItem()
---     if not IsGetCurrentHeldItemHooked then
---         RegisterHook("/Game/Blueprints/Characters/Abiotic_PlayerCharacter.Abiotic_PlayerCharacter_C:GetCurrentHeldItem", GetCurrentHeldItemHook)
---         IsGetCurrentHeldItemHooked = true
---     end
--- end
-
 local IsBatteryTickHooked = false
 local function TryHookBatteryTick()
     if not IsBatteryTickHooked then
@@ -107,7 +81,6 @@ end
 if DebugMode then
     InfiniteBatteryCharge = false
     InfiniteGearCharge = false
-    -- HookGetCurrentHeldItem()
     TryHookBatteryTick()
 end
 
@@ -128,13 +101,6 @@ LoopAsync(500, function()
     end
     return false
 end)
-
--- RegisterHook("/Script/Engine.PlayerController:ClientRestart", function(Context, NewPawn)
---     LogDebug("[ClientRestart] called:")
---     HookGetCurrentHeldItem()
---     LoopAsync(2000, TryHookBatteryTick)
---     LogDebug("------------------------------")
--- end)
 
 local function SetInfiniteBatteryChargeState(Enable)
     ExecuteInGameThread(function()
