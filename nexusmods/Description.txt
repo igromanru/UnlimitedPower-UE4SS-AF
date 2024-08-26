@@ -1,18 +1,18 @@
 [font=Verdana][size=4][b]Introduction[/b][/size][/font]
-You became strong with the Dark Side. Now everything you touch is fully charged immediately.
+You became strong with the Dark Side. Now everything that touches your skin becomes fully charged immediately.
 Your immense power radiates from you, keeping all batteries fully charged all the time.
 
 [font=Verdana][size=4][b]Description[/b][/size][/font]
 The new version of the mod has two primarily features.
 It charges all batteries placed in the world to their maximum value and prevents them from being drained. You can connect as many devices as you like to a single battery.
-Second feature, your currently held item (selected item in hotbar) becomes fully charged.
-Both features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b] while the Infinite Held Item Charge it togglebar with [b]F7[/b].
+Second feature, your currently held item (selected item in hotbar) and your equipped gear becomes fully charged.
+Both features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b] while the Infinite Gear Charge it togglebar with [b]F7[/b].
 See the [b]Mod Configuration[/b] section below for details how to change hotkeys and disable features per default.
 
 [font=Verdana][size=4][b]Hints[/b][/size][/font]
 [list][*]The changed batteries charge isn't instantly visible, it might take a while until game updates the visuals. You can pick up the battery to see that it's full.
-[*]When Held Item is drained, the mod will try to replenish it with best allowed energy. If it's allowed it will be filled with laser energy.[/list]
-
+[*]When equipped Gear and Held Item is drained, the mod will try to replenish it with best allowed energy. If it's allowed it will be filled with laser energy.
+[/list]
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
 [size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
 
@@ -42,17 +42,18 @@ UE4SS doc contains possible [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/
 [size=2]Both features are On (true) per default, if you want change the default state of the feature, simply change it's value from [b]true[/b] to [b]false[/b].[/size]
 Example:
 [code]local InfiniteBatteryCharge = false
-local InfiniteHeldItemCharge = false[/code]
+local InfiniteGearCharge = false[/code]
+[size=2]If you want the state of v2.1.0 when the mod would charge [b]only[/b] your Held Item, you can set [b]ApplyToHeldItemOnly = true[/b][/size]
 4. Don't forget to save your changes!
 
 [font=Verdana][size=4][b]How to use[/b][/size][/font]
 [list][*]The mod is enabled per default!
 [*]You can press toggle key F8 (default key) to Disable/Enable Infinite Battery Charge,
-[*]Toggle key F7 (default key) to Disable/Enable Infinite Held Item Charge
+[*]Toggle key F7 (default key) to Disable/Enable Infinite Gear Charge (it also charges the Held Item)
 [*]Changed state of each feature will be printed to the game's chat. But it should be only visible to you.
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
-[*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested[/list]
-
+[*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested
+[/list]
 [font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
 [size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
 1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
