@@ -19,7 +19,9 @@ local InfiniteBatteryCharge = true
 local InfiniteGearChargeKey = Key.F7
 local InfiniteGearChargeKeyModifiers = {}
 local InfiniteGearCharge = true
--- If set to true only the Held Item will be charged, otherwise Held Item and equipped gear
+-- If set to true, the equipment of all players will be charged
+local InfiniteGearChargeForAll = false
+-- If set to true, only the Held Item will be charged, otherwise Held Item and equipped gear
 local ApplyToHeldItemOnly = false
 -------------------------------------
 
@@ -29,7 +31,7 @@ local ApplyToHeldItemOnly = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.2.0"
+ModVersion = "2.3.0"
 DebugMode = true
 
 LogInfo("Starting mod initialization")
@@ -77,6 +79,35 @@ local function TryHookBatteryTick()
     return IsBatteryTickHooked
 end
 
+---@param playerCharacter AAbiotic_PlayerCharacter_C
+local function FillPlayersGear(playerCharacter)
+    AFUtils.FillHeldItemWithEnergy(playerCharacter)
+    if not ApplyToHeldItemOnly then
+        AFUtils.FillAllEquippedItemsWithEnergy(playerCharacter)
+    end
+end
+
+local function ChargeGear()
+    if InfiniteGearCharge then
+        ExecuteInGameThread(function()
+            if InfiniteGearChargeForAll then
+                local gameState = AFUtils.GetSurvivalGameState()
+                if gameState:IsValid() then
+                    for i = 1, #gameState.PlayerArray do
+                        local playerState = gameState.PlayerArray[i]
+                        if playerState:IsValid() then
+                            local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
+                            FillPlayersGear(playerCharacter)
+                        end
+                    end
+                end
+            else
+                FillPlayersGear(AFUtils.GetMyPlayer())
+            end
+        end)
+    end
+end
+
 -- For hot reload
 if DebugMode then
     InfiniteBatteryCharge = false
@@ -87,17 +118,7 @@ end
 LoopAsync(500, function()
     if IsModEnabled then
         TryHookBatteryTick()
-        if InfiniteGearCharge then
-            ExecuteInGameThread(function()
-                local myPlayer = AFUtils.GetMyPlayer()
-                if myPlayer then
-                    AFUtils.FillHeldItemWithEnergy(myPlayer)
-                    if not ApplyToHeldItemOnly then
-                        AFUtils.FillAllEquippedItemsWithEnergy(myPlayer)
-                    end
-                end
-            end)
-        end
+        ChargeGear()
     end
     return false
 end)
