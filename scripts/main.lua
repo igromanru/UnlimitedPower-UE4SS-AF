@@ -40,7 +40,7 @@ local IsModEnabled = true
 
 local function BatteryTickHook(Context)
     local deployedBattery = Context:get()
-
+    
     if IsModEnabled and InfiniteBatteryCharge and deployedBattery.ChangeableData then
         local liquidType = deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
         local liquidLevel = deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
@@ -51,23 +51,21 @@ local function BatteryTickHook(Context)
                 deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Energy
             end
             
-            -- this["Update Current Item Data"]()
-
-            -- LogDebug("[BatteryTick] called:")
-            -- LogDebug("Liquid type: " .. liquidType)
-            -- LogDebug("LiquidLevel: " .. liquidLevel)
-            -- LogDebug("Set Liquid type: " .. this.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-            -- LogDebug("Set LiquidLevel: " .. this.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
-            -- LogDebug("FreezeBatteryDrain: " .. tostring(this.FreezeBatteryDrain))
-            -- LogDebug("------------------------------")
+            LogDebug("[BatteryTick] called:")
+            LogDebug("Liquid type: " .. liquidType)
+            LogDebug("LiquidLevel: " .. liquidLevel)
+            LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+            LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+            LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
+            LogDebug("------------------------------")
         end
     end
 end
 
 local IsBatteryTickHooked = false
+local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
 local function TryHookBatteryTick()
     if not IsBatteryTickHooked then
-        local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
         local BatteryTickFunction = StaticFindObject(BatteryTickFuncName)
         if BatteryTickFunction and BatteryTickFunction:IsValid() then
             RegisterHook(BatteryTickFuncName, BatteryTickHook)
