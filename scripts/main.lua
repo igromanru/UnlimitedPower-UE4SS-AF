@@ -51,13 +51,13 @@ local function BatteryTickHook(Context)
                 deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Energy
             end
             
-            LogDebug("[BatteryTick] called:")
-            LogDebug("Liquid type: " .. liquidType)
-            LogDebug("LiquidLevel: " .. liquidLevel)
-            LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-            LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
-            LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
-            LogDebug("------------------------------")
+            -- LogDebug("[BatteryTick] called:")
+            -- LogDebug("Liquid type: " .. liquidType)
+            -- LogDebug("LiquidLevel: " .. liquidLevel)
+            -- LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+            -- LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+            -- LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
+            -- LogDebug("------------------------------")
         end
     end
 end
