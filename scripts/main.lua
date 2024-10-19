@@ -12,17 +12,17 @@
 -- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + {Key]
 
 ----- Infinite Battery Charge -------
-local InfiniteBatteryChargeKey = Key.F8
-local InfiniteBatteryChargeKeyModifiers = {}
-local InfiniteBatteryCharge = true
+InfiniteBatteryChargeKey = Key.F8
+InfiniteBatteryChargeKeyModifiers = {}
+InfiniteBatteryCharge = true
 ---- Infinite Gear Charge ------
-local InfiniteGearChargeKey = Key.F7
-local InfiniteGearChargeKeyModifiers = {}
-local InfiniteGearCharge = true
+InfiniteGearChargeKey = Key.F7
+InfiniteGearChargeKeyModifiers = {}
+InfiniteGearCharge = true
 -- If set to true, the equipment of all players will be charged
-local InfiniteGearChargeForAll = false
+InfiniteGearChargeForAll = false
 -- If set to true, only the Held Item will be charged, otherwise Held Item and equipped gear
-local ApplyToHeldItemOnly = false
+ApplyToHeldItemOnly = false
 -------------------------------------
 
 ------------------------------
