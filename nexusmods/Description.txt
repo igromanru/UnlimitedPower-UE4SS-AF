@@ -7,6 +7,7 @@ The new version of the mod has two primarily features.
 It charges all batteries placed in the world to their maximum value and prevents them from being drained. You can connect as many devices as you like to a single battery.
 Second feature, your currently held item (selected item in hotbar) and your equipped gear becomes fully charged.
 Both features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b] while the Infinite Gear Charge it togglebar with [b]F7[/b].
+Since v2.3.0 the mod has an option to enable infinite gear and held item energy to all players.
 See the [b]Mod Configuration[/b] section below for details how to change hotkeys and disable features per default.
 
 [font=Verdana][size=4][b]Hints[/b][/size][/font]
@@ -14,19 +15,20 @@ See the [b]Mod Configuration[/b] section below for details how to change hotkeys
 [*]When equipped Gear and Held Item is drained, the mod will try to replenish it with best allowed energy. If it's allowed it will be filled with laser energy.
 [/list]
 [font=Verdana][size=4][b]Requirements[/b][/size][/font]
-[size=3]Unreal Engine Scripting System aka. [url=https://github.com/UE4SS-RE/RE-UE4SS]RE-UE4SS[/url][/size]
+[size=3][url=https://www.nexusmods.com/abioticfactor/mods/35]UE4SS for Abiotic Factor[/url][/size]
 
 [font=Verdana][size=4][b]Manual Installation[/b][/size][/font]
-[size=2]As for now Vortex doesn't support the game, so you have to install the mod manually.[/size]
-1. Download the latest version of RE-UE4SS from it's [url=https://github.com/UE4SS-RE/RE-UE4SS/releases]Release[/url] section. You need the [b]UE4SS_v{version nummber}.zip[/b] (e.g. UE4SS_v3.0.1.zip)
-2. Unzip the content of the zip archive into the following location: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
-[size=2]It should be at the location of the [b]AbioticFactor-Win64-Shipping.exe[/b] !
-For Steam users it might be something like this: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
-3. Now use the [b]Manual Download[/b] button in [i]Files[/i] tab to download the mod as a zip file as well.
-4. Unzip/extract the content of mod's zip ([b]UnlimitedPower[/b] folder) into the directory: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\[/i]
-[size=2]Whole mod path should be like this: [i](game root directory)\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\[/i]
-Steam example: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\
-[/i][/size]5. Done, you can change mod's hotkey, if you want (see below).
+[size=1]As for now Vortex doesn't support the game, so you have to install the mod manually.[/size]
+1. Follow the instruction on the [url=https://www.nexusmods.com/abioticfactor/mods/35]UE4SS for Abiotic Factor[/url] page to download and install latest UE4SS from there.
+2. After use the [b]Manual Download[/b] button in [i]Files[/i] tab of this mod to download the mod as a zip file.
+4. Unzip/extract the content of mod's zip ([b]UnlimitedPower[/b] folder) into the directory: [i](game root directory)\AbioticFactor\Binaries\Win64\ue4ss\Mods\[/i]
+[size=2]Make sure you don't create a new folder while extracting! If you do just move the content to the destination after.[/size]
+[size=2]Whole mod path should be like this: [i](game root directory)\AbioticFactor\Binaries\Win64\ue4ss\Mods\UnlimitedPower\[/i][/size]
+[size=2]Steam example: [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\ue4ss\Mods\UnlimitedPower\[/i][/size]
+5. Verify that you have installed the mod correctly.
+The mod directory should contain a [b]Scripts[/b] folder and an [b]enabled.txt[/b] file.
+[size=2][i](game root directory)\AbioticFactor\Binaries\Win64\ue4ss\Mods\UnlimitedPower\Scripts\[/i]
+[i](game root directory)\AbioticFactor\Binaries\Win64\ue4ss\Mods\UnlimitedPower\enabled.txt[/i][/size]
 
 [font=Verdana][size=4][b]Mod Configuration[/b][/size][/font]
 [size=2]All the configurations are happening in the [b]main.lua[/b][/size]
@@ -41,9 +43,11 @@ UE4SS doc contains possible [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/
 [b]On/Off[/b]
 [size=2]Both features are On (true) per default, if you want change the default state of the feature, simply change it's value from [b]true[/b] to [b]false[/b].[/size]
 Example:
-[code]local InfiniteBatteryCharge = false
-local InfiniteGearCharge = false[/code]
+[code]InfiniteBatteryCharge = false
+InfiniteGearCharge = false
+[/code]
 [size=2]If you want the state of v2.1.0 when the mod would charge [b]only[/b] your Held Item, you can set [b]ApplyToHeldItemOnly = true[/b][/size]
+Since v2.3.0 you have the option to enable [b]InfiniteGearChargeForAll[/b], it will apply infinite gear and held item energy to all players. It respects the ApplyToHeldItemOnly variable setting as well.
 4. Don't forget to save your changes!
 
 [font=Verdana][size=4][b]How to use[/b][/size][/font]
@@ -52,22 +56,26 @@ local InfiniteGearCharge = false[/code]
 [*]Toggle key F7 (default key) to Disable/Enable Infinite Gear Charge (it also charges the Held Item)
 [*]Changed state of each feature will be printed to the game's chat. But it should be only visible to you.
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
-[*]The mod was developed and tested in Singleplayer, it should work if you're the host as well, but it's untested
+[*]You can set [b]InfiniteGearChargeForAll = true[/b] in [i]main.lua[/i] to enable infinite energy for all players
 [/list]
-[font=Verdana][size=4][b]Recommended UE4SS settings for better performance[/b][/size][/font]
-[size=2]If you experience lag spikes, I highly recommend to change this settings.[/size]
-1. Navigate to the game directory where you've installed the UE4SS: [i](game root directory)\AbioticFactor\Binaries\Win64\[/i]
-[size=2]e.g. [i]C:\Program Files (x86)\Steam\steamapps\common\AbioticFactor\Binaries\Win64\[/i][/size]
-2. Open [b]UE4SS-settings.ini[/b] with any text editor.
-3. Find following entries and change them as following:
-[code]bUseUObjectArrayCache = false
-GuiConsoleEnabled = 0[/code]
-4. Save the file.
-[size=2]If you still experience performance issues, write a detailed comment what happens, your PC specs and which mods you use.[/size]
+[font=Verdana][size=4][b]Dedicated Server[/b][/size][/font]
+If the mod is running on a Dedicated Server, the hotkeys will of course not work and no text will be shown in chat or display.
+As long the [b]InfiniteGearChargeForAll[/b] variable is set NOT set to [b]true[/b], only the [b]first[/b] player on the server will have infinite charge in his gear and held item.
 
-[font=Verdana][size=4][b]Known Issues[/b][/size][/font]
-Current UE4SS version works well with the game, but it has of a problem that causes the game to crash when you exit it.
-It has nothing to do with the mod and it has no negative impact on the game or your save file, it's just a bit annoying.
-And you might want to delete crash dump ([b].dmp[/b]) files from time to time from your game directory.
-
+[font=Verdana][size=4][b]My AF Mods[/b][/size][/font]
+Check out my other Abiotic Factor mods.
+[list]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/28]Cheat Console Commands[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/33]Stack Manager[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/23]Instant Fishing[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/20]Duplicate Items[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/31]Jager Corpse Remover[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/41]Infinite Leyak Containment[/url]
+[/list]
 [b][url=https://github.com/igromanru/UnlimitedPower_UE4SS_AF]GitHub Page[/url][/b]
+
+[font=Arial][size=4]Highest form of appreciation[/size][/font]
+[size=2]If you like my work and feel generous, you can support me.[/size]
+[b]BTC:[/b] bc1q3frvfljn7ut09ggep2gxugv4ypqvyexz3ya7ja
+[b]ADA:[/b] addr1qyx2sd2rgwdzvjhwnc35udx4k6w9lg524pwrf0llr7d2shzrewyq3nqyxfceuhgh5n5ucx3n8ws0n48krrlpw4khtedq4hzv93
+[url=https://ko-fi.com/igromanru][img]https://i.imgur.com/rGcPxK8.png[/img][/url]
