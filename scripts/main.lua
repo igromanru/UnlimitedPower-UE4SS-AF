@@ -31,7 +31,7 @@ ApplyToHeldItemOnly = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.3.0"
+ModVersion = "2.3.1"
 DebugMode = true
 
 LogInfo("Starting mod initialization")
@@ -51,28 +51,27 @@ local function BatteryTickHook(Context)
                 deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Energy
             end
             
-            -- LogDebug("[BatteryTick] called:")
-            -- LogDebug("Liquid type: " .. liquidType)
-            -- LogDebug("LiquidLevel: " .. liquidLevel)
-            -- LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-            -- LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
-            -- LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
-            -- LogDebug("------------------------------")
+            if DebugMode then
+                LogDebug("[BatteryTick] called:")
+                LogDebug("Liquid type: " .. liquidType)
+                LogDebug("LiquidLevel: " .. liquidLevel)
+                LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
+                LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
+                LogDebug("------------------------------")
+            end
         end
     end
 end
 
 local IsBatteryTickHooked = false
-local BatteryTickFuncName = "/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick"
-local function TryHookBatteryTick()
+local function HookBatteryTick()
     if not IsBatteryTickHooked then
-        local BatteryTickFunction = StaticFindObject(BatteryTickFuncName)
-        if BatteryTickFunction and BatteryTickFunction:IsValid() then
-            RegisterHook(BatteryTickFuncName, BatteryTickHook)
+        ExecuteInGameThread(function()
+            LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
+            RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
             IsBatteryTickHooked = true
-        -- else
-        --     LogDebug("TryHookBatteryTick: Function BatteryTick doesn't yet exist, hook skipped")
-        end
+        end)
     end
     return IsBatteryTickHooked
 end
@@ -105,21 +104,6 @@ local function ChargeGear()
         end)
     end
 end
-
--- For hot reload
-if DebugMode then
-    InfiniteBatteryCharge = false
-    InfiniteGearCharge = false
-    TryHookBatteryTick()
-end
-
-LoopAsync(500, function()
-    if IsModEnabled then
-        TryHookBatteryTick()
-        ChargeGear()
-    end
-    return false
-end)
 
 local function SetInfiniteBatteryChargeState(Enable)
     ExecuteInGameThread(function()
@@ -159,8 +143,23 @@ local function SetInfiniteGearChargeState(Enable)
     end)
 end
 
+-- For hot reload
+if DebugMode then
+    InfiniteBatteryCharge = false
+    InfiniteGearCharge = false
+end
+
 RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
     SetInfiniteGearChargeState(not InfiniteGearCharge)
 end)
+
+LoopAsync(500, function()
+    if IsModEnabled then
+        ChargeGear()
+    end
+    return false
+end)
+
+HookBatteryTick()
 
 LogInfo("Mod loaded successfully")
