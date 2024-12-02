@@ -8,8 +8,8 @@
 ---------- Configurations -----------
 -------------------------------------
 -- Possible Key value: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md
--- ModifierKey alues: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
--- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + {Key]
+-- ModifierKey values: https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/modifierkey.md
+-- ModifierKeys can be combined. e.g.: {ModifierKey.CONTROL, ModifierKey.ALT} = CTRL + ALT + {Key}
 
 ----- Infinite Battery Charge -------
 InfiniteBatteryChargeKey = Key.F8
@@ -68,8 +68,10 @@ local IsBatteryTickHooked = false
 local function HookBatteryTick()
     if not IsBatteryTickHooked then
         ExecuteInGameThread(function()
+            LogInfo("Initializing hooks")
             LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
             RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
+            LogInfo("Hooks initialized")
             IsBatteryTickHooked = true
         end)
     end
