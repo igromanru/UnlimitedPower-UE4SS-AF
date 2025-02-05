@@ -31,7 +31,7 @@ ApplyToHeldItemOnly = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.3.1"
+ModVersion = "2.3.2"
 DebugMode = true
 
 LogInfo("Starting mod initialization")
