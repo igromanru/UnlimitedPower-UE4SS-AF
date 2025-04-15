@@ -64,20 +64,6 @@ local function BatteryTickHook(Context)
     end
 end
 
-local IsBatteryTickHooked = false
-local function HookBatteryTick()
-    if not IsBatteryTickHooked then
-        ExecuteInGameThread(function()
-            LogInfo("Initializing hooks")
-            LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
-            RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
-            LogInfo("Hooks initialized")
-            IsBatteryTickHooked = true
-        end)
-    end
-    return IsBatteryTickHooked
-end
-
 ---@param playerCharacter AAbiotic_PlayerCharacter_C
 local function FillPlayersGear(playerCharacter)
     AFUtils.FillHeldItemWithEnergy(playerCharacter)
@@ -91,7 +77,7 @@ local function ChargeGear()
         ExecuteInGameThread(function()
             if InfiniteGearChargeForAll then
                 local gameState = AFUtils.GetSurvivalGameState()
-                if gameState:IsValid() then
+                if IsValid(gameState) then
                     for i = 1, #gameState.PlayerArray do
                         local playerState = gameState.PlayerArray[i]
                         if playerState:IsValid() then
@@ -162,6 +148,11 @@ LoopAsync(500, function()
     return false
 end)
 
-HookBatteryTick()
+ExecuteInGameThread(function()
+    LogInfo("Initializing hooks")
+    LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
+    RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
+    LogInfo("Hooks initialized")
+end)
 
 LogInfo("Mod loaded successfully")
