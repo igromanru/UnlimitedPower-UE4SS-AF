@@ -201,7 +201,7 @@ RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
     SetNoOverheatState(not NoOverheat)
 end)
 
-LoopAsync(500, function()
+LoopAsync(300, function()
     if IsModEnabled then
         ChargeGear()
         ChangeOverheat()
