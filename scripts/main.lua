@@ -198,7 +198,7 @@ RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function(
 end)
 
 RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
-    SetNoOverheatState(not InfiniteGearCharge)
+    SetNoOverheatState(not NoOverheat)
 end)
 
 LoopAsync(500, function()
