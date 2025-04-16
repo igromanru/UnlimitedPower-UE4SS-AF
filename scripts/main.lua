@@ -23,6 +23,13 @@ InfiniteGearCharge = true
 InfiniteGearChargeForAll = false
 -- If set to true, only the Held Item will be charged, otherwise Held Item and equipped gear
 ApplyToHeldItemOnly = false
+---- No Overheat ------
+NoOverheatKey = Key.F6
+NoOverheatKeyModifiers = {}
+-- If set to true, items that can overheat won't overheat. (currently only Jetpack)
+NoOverheat = true
+-- Enable no overheat for all players
+NoOverheatForAll = false
 -------------------------------------
 
 ------------------------------
@@ -31,7 +38,7 @@ ApplyToHeldItemOnly = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.3.2"
+ModVersion = "2.4.0"
 DebugMode = true
 
 LogInfo("Starting mod initialization")
@@ -72,6 +79,16 @@ local function FillPlayersGear(playerCharacter)
     end
 end
 
+---@param playerCharacter AAbiotic_PlayerCharacter_C
+local function RemoveOverheat(playerCharacter)
+    if playerCharacter:IsValid() and playerCharacter.Gear_BackpackBP:IsValid() then
+        local jetpack = playerCharacter.Gear_BackpackBP ---@cast jetpack AGear_Jetpack_BP_C
+        if jetpack.CurrentOverheatLevel then
+            jetpack.CurrentOverheatLevel = 0.0
+        end
+    end
+end
+
 local function ChargeGear()
     if InfiniteGearCharge then
         ExecuteInGameThread(function()
@@ -88,6 +105,27 @@ local function ChargeGear()
                 end
             else
                 FillPlayersGear(AFUtils.GetMyPlayer())
+            end
+        end)
+    end
+end
+
+local function ChangeOverheat()
+    if NoOverheat then
+        ExecuteInGameThread(function()
+            if NoOverheatForAll then
+                local gameState = AFUtils.GetSurvivalGameState()
+                if gameState:IsValid() then
+                    for i = 1, #gameState.PlayerArray do
+                        local playerState = gameState.PlayerArray[i]
+                        if playerState:IsValid() then
+                            local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
+                            RemoveOverheat(playerCharacter)
+                        end
+                    end
+                end
+            else
+                RemoveOverheat(AFUtils.GetMyPlayer())
             end
         end)
     end
@@ -131,19 +169,42 @@ local function SetInfiniteGearChargeState(Enable)
     end)
 end
 
+local function SetNoOverheatState(Enable)
+    ExecuteInGameThread(function()
+        Enable = Enable or false
+        NoOverheat = Enable
+        local state = "Disabled"
+        local warningColor =  AFUtils.CriticalityLevels.Red
+        if NoOverheat then
+            state = "Enabled"
+            warningColor =  AFUtils.CriticalityLevels.Green
+        end
+        local stateMessage = "No Overheat: " .. state
+        LogInfo(stateMessage)
+        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+    end)
+end
+
 -- For hot reload
 if DebugMode then
     InfiniteBatteryCharge = false
     InfiniteGearCharge = false
+    NoOverheat = false
 end
 
 RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
     SetInfiniteGearChargeState(not InfiniteGearCharge)
 end)
 
+RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
+    SetNoOverheatState(not InfiniteGearCharge)
+end)
+
 LoopAsync(500, function()
     if IsModEnabled then
         ChargeGear()
+        ChangeOverheat()
     end
     return false
 end)
