@@ -3,11 +3,13 @@ You became strong with the Dark Side. Now everything that touches your skin beco
 Your immense power radiates from you, keeping all batteries fully charged all the time.
 
 [font=Verdana][size=4][b]Description[/b][/size][/font]
-The new version of the mod has two primarily features.
+The new version of the mod has three primarily features.
 It charges all batteries placed in the world to their maximum value and prevents them from being drained. You can connect as many devices as you like to a single battery.
 Second feature, your currently held item (selected item in hotbar) and your equipped gear becomes fully charged.
-Both features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b] while the Infinite Gear Charge it togglebar with [b]F7[/b].
+Third feature (since v2.4.0), removes heat from equipped Backpack targeting Jetpacks.
+All features are enabled per default and can be toggles off/on with hotkeys. The Infinite Battery Charge is bound to the key [b]F8[/b], Infinite Gear Charge it togglebar with [b]F7[/b] and No Overheat with [b]F6[/b].
 Since v2.3.0 the mod has an option to enable infinite gear and held item energy to all players.
+Since v2.4.0 the new No Overheat feature has the option to enable it for all players as well.
 See the [b]Mod Configuration[/b] section below for details how to change hotkeys and disable features per default.
 
 [font=Verdana][size=4][b]Hints[/b][/size][/font]
@@ -33,7 +35,7 @@ The mod directory should contain a [b]Scripts[/b] folder and an [b]enabled.txt[/
 [font=Verdana][size=4][b]Mod Configuration[/b][/size][/font]
 [size=2]All the configurations are happening in the [b]main.lua[/b][/size]
 1. Navigate into mod's directory->scripts to find the [b]main.lua[/b] file.
-[size=2]It should be under: (game root directory)\AbioticFactor\Binaries\Win64\Mods\UnlimitedPower\scripts\[/size]
+[size=2]It should be under: (game root directory)\AbioticFactor\Binaries\Win64\ue4ss\Mods\UnlimitedPower\scripts\[/size]
 2. Open the [b]main.lua[/b] with Notepad or any other text editor.
 3. Under the [b]Configurations[/b] section in the [i]main.lua[/i] you will find a subsection for each feature.
 [size=2]Each feature has a variable for the primary key, modifier keys and an "on/off" (true/false) variable.[/size]
@@ -41,26 +43,30 @@ The mod directory should contain a [b]Scripts[/b] folder and an [b]enabled.txt[/
 [size=2]Each hotkey is a combination of the primary "Key" and "KeyModifiers", modifiers are support keys like SHIFT, CTRL, ALT.
 UE4SS doc contains possible [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md]Key[/url] (click link) values and [url=https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api/table-definitions/key.md]ModifierKey [/url](click link) with examples.[/size]
 [b]On/Off[/b]
-[size=2]Both features are On (true) per default, if you want change the default state of the feature, simply change it's value from [b]true[/b] to [b]false[/b].[/size]
+[size=2]All features are On (true) per default, if you want to change the default state of the feature, simply change its value from [b]true[/b] to [b]false[/b].[/size]
 Example:
 [code]InfiniteBatteryCharge = false
 InfiniteGearCharge = false
+NoOverheat = false
 [/code]
 [size=2]If you want the state of v2.1.0 when the mod would charge [b]only[/b] your Held Item, you can set [b]ApplyToHeldItemOnly = true[/b][/size]
 Since v2.3.0 you have the option to enable [b]InfiniteGearChargeForAll[/b], it will apply infinite gear and held item energy to all players. It respects the ApplyToHeldItemOnly variable setting as well.
+The No Overheat feature also has [b]NoOverheatForAll[/b] variable, which will remove heat from all players if set to [b]true[/b].
 4. Don't forget to save your changes!
 
 [font=Verdana][size=4][b]How to use[/b][/size][/font]
 [list][*]The mod is enabled per default!
 [*]You can press toggle key F8 (default key) to Disable/Enable Infinite Battery Charge,
 [*]Toggle key F7 (default key) to Disable/Enable Infinite Gear Charge (it also charges the Held Item)
+[*]With F6 (default key) you can toggle On/Off "No Overheat"
 [*]Changed state of each feature will be printed to the game's chat. But it should be only visible to you.
 [*]You can toggle the mod's features any time, even if the chat is not visible, even in main menu.
 [*]You can set [b]InfiniteGearChargeForAll = true[/b] in [i]main.lua[/i] to enable infinite energy for all players
+[*]You can set [b]NoOverheatForAll = true[/b] in [i]main.lua[/i] to enable No Overheat feature for all players
 [/list]
 [font=Verdana][size=4][b]Dedicated Server[/b][/size][/font]
 If the mod is running on a Dedicated Server, the hotkeys will of course not work and no text will be shown in chat or display.
-As long the [b]InfiniteGearChargeForAll[/b] variable is set NOT set to [b]true[/b], only the [b]first[/b] player on the server will have infinite charge in his gear and held item.
+As long the [b]InfiniteGearChargeForAll[/b] variable is NOT set to [b]true[/b], only the [b]first[/b] player on the server will have infinite charge in his gear and held item.
 
 [font=Verdana][size=4][b]My AF Mods[/b][/size][/font]
 Check out my other Abiotic Factor mods.
@@ -71,11 +77,11 @@ Check out my other Abiotic Factor mods.
 [*][url=https://www.nexusmods.com/abioticfactor/mods/20]Duplicate Items[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/31]Jager Corpse Remover[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/41]Infinite Leyak Containment[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/42]Customization Unlocker[/url]
 [/list]
 [b][url=https://github.com/igromanru/UnlimitedPower_UE4SS_AF]GitHub Page[/url][/b]
 
 [font=Arial][size=4]Highest form of appreciation[/size][/font]
 [size=2]If you like my work and feel generous, you can support me.[/size]
-[b]BTC:[/b] bc1q3frvfljn7ut09ggep2gxugv4ypqvyexz3ya7ja
-[b]ADA:[/b] addr1qyx2sd2rgwdzvjhwnc35udx4k6w9lg524pwrf0llr7d2shzrewyq3nqyxfceuhgh5n5ucx3n8ws0n48krrlpw4khtedq4hzv93
 [url=https://ko-fi.com/igromanru][img]https://i.imgur.com/rGcPxK8.png[/img][/url]
+[url=https://buymeacoffee.com/igromanru][img]https://i.imgur.com/JG0mNZg.png[/img][/url]
