@@ -68,6 +68,16 @@ The No Overheat feature also has [b]NoOverheatForAll[/b] variable, which will r
 If the mod is running on a Dedicated Server, the hotkeys will of course not work and no text will be shown in chat or display.
 As long the [b]InfiniteGearChargeForAll[/b] variable is NOT set to [b]true[/b], only the [b]first[/b] player on the server will have infinite charge in his gear and held item.
 
+[font=Verdana][size=4][b]Bug/Issue Reports[/b][/size][/font]
+If you have followed the installation instructions above and are 100% sure that you have done everything correctly, but you are still having problems with the mod, please provide the following information if you wish to report an issue. 
+[list=1]
+[*]Your game version and Platform (Steam/GoG etc.)
+[*]Which mod version are you using
+[*]The content of [b]UE4SS.log[/b] file.
+[/list]The log file is located in the [b]ue4ss[/b] directory.
+Path: [i](game root directory)\AbioticFactor\Binaries\Win64\ue4ss[/i]
+The easiest way to share the content of the log file is to upload it to a site like: [url=https://pastebin.com/]pastebin.com[/url]
+
 [font=Verdana][size=4][b]My AF Mods[/b][/size][/font]
 Check out my other Abiotic Factor mods.
 [list]
@@ -75,7 +85,7 @@ Check out my other Abiotic Factor mods.
 [*][url=https://www.nexusmods.com/abioticfactor/mods/33]Stack Manager[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/23]Instant Fishing[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/20]Duplicate Items[/url]
-[*][url=https://www.nexusmods.com/abioticfactor/mods/31]Jager Corpse Remover[/url]
+[*][url=https://www.nexusmods.com/abioticfactor/mods/50]Always Outline[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/41]Infinite Leyak Containment[/url]
 [*][url=https://www.nexusmods.com/abioticfactor/mods/42]Customization Unlocker[/url]
 [/list]
