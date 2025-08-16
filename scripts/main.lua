@@ -91,43 +91,39 @@ end
 
 local function ChargeGear()
     if InfiniteGearCharge then
-        ExecuteInGameThread(function()
-            if InfiniteGearChargeForAll then
-                local gameState = AFUtils.GetSurvivalGameState()
-                if IsValid(gameState) then
-                    for i = 1, #gameState.PlayerArray do
-                        local playerState = gameState.PlayerArray[i]
-                        if playerState:IsValid() then
-                            local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
-                            FillPlayersGear(playerCharacter)
-                        end
+        if InfiniteGearChargeForAll then
+            local gameState = AFUtils.GetSurvivalGameState()
+            if IsValid(gameState) then
+                for i = 1, #gameState.PlayerArray do
+                    local playerState = gameState.PlayerArray[i]
+                    if playerState:IsValid() then
+                        local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
+                        FillPlayersGear(playerCharacter)
                     end
                 end
-            else
-                FillPlayersGear(AFUtils.GetMyPlayer())
             end
-        end)
+        else
+            FillPlayersGear(AFUtils.GetMyPlayer())
+        end
     end
 end
 
 local function ChangeOverheat()
     if NoOverheat then
-        ExecuteInGameThread(function()
-            if NoOverheatForAll then
-                local gameState = AFUtils.GetSurvivalGameState()
-                if gameState:IsValid() then
-                    for i = 1, #gameState.PlayerArray do
-                        local playerState = gameState.PlayerArray[i]
-                        if playerState:IsValid() then
-                            local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
-                            RemoveOverheat(playerCharacter)
-                        end
+        if NoOverheatForAll then
+            local gameState = AFUtils.GetSurvivalGameState()
+            if gameState:IsValid() then
+                for i = 1, #gameState.PlayerArray do
+                    local playerState = gameState.PlayerArray[i]
+                    if playerState:IsValid() then
+                        local playerCharacter = playerState.PawnPrivate ---@cast playerCharacter AAbiotic_PlayerCharacter_C
+                        RemoveOverheat(playerCharacter)
                     end
                 end
-            else
-                RemoveOverheat(AFUtils.GetMyPlayer())
             end
-        end)
+        else
+            RemoveOverheat(AFUtils.GetMyPlayer())
+        end
     end
 end
 
@@ -143,7 +139,7 @@ local function SetInfiniteBatteryChargeState(Enable)
         end
         local stateMessage = "Infinite Battery Charge: " .. state
         LogInfo(stateMessage)
-        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
         AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
@@ -164,7 +160,7 @@ local function SetInfiniteGearChargeState(Enable)
         end
         local stateMessage = "Infinite Gear Charge: " .. state
         LogInfo(stateMessage)
-        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
         AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
@@ -181,7 +177,7 @@ local function SetNoOverheatState(Enable)
         end
         local stateMessage = "No Overheat: " .. state
         LogInfo(stateMessage)
-        AFUtils.ModDisplayTextChatMessage(stateMessage)
+        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
         AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
@@ -203,8 +199,10 @@ end)
 
 LoopAsync(300, function()
     if IsModEnabled then
-        ChargeGear()
-        ChangeOverheat()
+        ExecuteInGameThread(function()
+            ChargeGear()
+            ChangeOverheat()
+        end)
     end
     return false
 end)
