@@ -38,7 +38,7 @@ NoOverheatForAll = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.4.1"
+ModVersion = "2.4.2"
 DebugMode = true
 
 LogInfo("Starting mod initialization")
