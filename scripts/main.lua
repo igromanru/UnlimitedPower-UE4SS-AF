@@ -38,17 +38,16 @@ NoOverheatForAll = false
 local AFUtils = require("AFUtils.AFUtils")
 
 ModName = "UnlimitedPower"
-ModVersion = "2.4.2"
+ModVersion = "2.4.3"
 DebugMode = true
+IsModEnabled = true
 
 LogInfo("Starting mod initialization")
 
-local IsModEnabled = true
-
-local function BatteryTickHook(Context)
-    local deployedBattery = Context:get()
+local function UpdateBatteryStateHook(Context)
+    local deployedBattery = Context:get() ---@type ADeployed_Battery_ParentBP_C
     
-    if IsModEnabled and InfiniteBatteryCharge and deployedBattery.ChangeableData then
+    if InfiniteBatteryCharge and deployedBattery.ChangeableData then
         local liquidType = deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
         local liquidLevel = deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
         if liquidType == AFUtils.LiquidType.None or not deployedBattery.FreezeBatteryDrain or liquidLevel < deployedBattery.MaxBattery then
@@ -59,7 +58,7 @@ local function BatteryTickHook(Context)
             end
             
             if DebugMode then
-                LogDebug("[BatteryTick] called:")
+                LogDebug("[UpdateBatteryState] called:")
                 LogDebug("Liquid type: " .. liquidType)
                 LogDebug("LiquidLevel: " .. liquidLevel)
                 LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
@@ -189,29 +188,29 @@ if DebugMode then
     NoOverheat = false
 end
 
-RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
-    SetInfiniteGearChargeState(not InfiniteGearCharge)
-end)
+if IsModEnabled then
+    RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
+        SetInfiniteGearChargeState(not InfiniteGearCharge)
+    end)
 
-RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
-    SetNoOverheatState(not NoOverheat)
-end)
+    RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
+        SetNoOverheatState(not NoOverheat)
+    end)
 
-LoopAsync(300, function()
-    if IsModEnabled then
+    LoopAsync(250, function()
         ExecuteInGameThread(function()
             ChargeGear()
             ChangeOverheat()
         end)
-    end
-    return false
-end)
+        return false
+    end)
 
-ExecuteInGameThread(function()
-    LogInfo("Initializing hooks")
-    LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
-    RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:BatteryTick", BatteryTickHook)
-    LogInfo("Hooks initialized")
-end)
+    ExecuteInGameThread(function()
+        LogInfo("Initializing hooks")
+        LoadAsset("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C")
+        RegisterHook("/Game/Blueprints/DeployedObjects/Misc/Deployed_Battery_ParentBP.Deployed_Battery_ParentBP_C:UpdateBatteryState", UpdateBatteryStateHook)
+        LogInfo("Hooks initialized")
+    end)
+end
 
 LogInfo("Mod loaded successfully")
