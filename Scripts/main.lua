@@ -26,7 +26,7 @@ ApplyToHeldItemOnly = false
 ---- No Overheat ------
 NoOverheatKey = Key.F6
 NoOverheatKeyModifiers = {}
--- If set to true, items that can overheat won't overheat. (currently only Jetpack)
+-- If set to true, items that can overheat won't overheat. (currently only Jetpack and JumpPack)
 NoOverheat = true
 -- Enable no overheat for all players
 NoOverheatForAll = false
@@ -36,13 +36,20 @@ NoOverheatForAll = false
 -- Don't change code below --
 ------------------------------
 local AFUtils = require("AFUtils.AFUtils")
+local isDedicatedServer = AFUtils.IsDedicatedServer()
 
 ModName = "UnlimitedPower"
-ModVersion = "2.4.3"
+ModVersion = "2.4.4"
 DebugMode = true
 IsModEnabled = true
 
 LogInfo("Starting mod initialization")
+
+local function ClientDisplayWarningMessage(Message, Color)
+    if isDedicatedServer then return end
+
+    AFUtils.ClientDisplayWarningMessage(Message, Color)
+end
 
 local function UpdateBatteryStateHook(Context)
     local deployedBattery = Context:get() ---@type ADeployed_Battery_ParentBP_C
@@ -81,9 +88,15 @@ end
 ---@param playerCharacter AAbiotic_PlayerCharacter_C
 local function RemoveOverheat(playerCharacter)
     if playerCharacter:IsValid() and playerCharacter.Gear_BackpackBP:IsValid() then
-        local jetpack = playerCharacter.Gear_BackpackBP ---@cast jetpack AGear_Jetpack_BP_C
+        local jetpack = playerCharacter.Gear_BackpackBP
         if jetpack.CurrentOverheatLevel then
             jetpack.CurrentOverheatLevel = 0.0
+        end
+        if jetpack.OverheatAmountOnUse then
+            jetpack.OverheatAmountOnUse = 0.0
+        end
+        if jetpack.OverheatRate then
+            jetpack.OverheatRate = 0.0
         end
     end
 end
@@ -138,14 +151,9 @@ local function SetInfiniteBatteryChargeState(Enable)
         end
         local stateMessage = "Infinite Battery Charge: " .. state
         LogInfo(stateMessage)
-        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
-        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+        ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
-
-RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
-    SetInfiniteBatteryChargeState(not InfiniteBatteryCharge)
-end)
 
 local function SetInfiniteGearChargeState(Enable)
     ExecuteInGameThread(function()
@@ -159,8 +167,7 @@ local function SetInfiniteGearChargeState(Enable)
         end
         local stateMessage = "Infinite Gear Charge: " .. state
         LogInfo(stateMessage)
-        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
-        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+        ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
 
@@ -176,8 +183,7 @@ local function SetNoOverheatState(Enable)
         end
         local stateMessage = "No Overheat: " .. state
         LogInfo(stateMessage)
-        -- AFUtils.ModDisplayTextChatMessage(stateMessage)
-        AFUtils.ClientDisplayWarningMessage(stateMessage, warningColor)
+        ClientDisplayWarningMessage(stateMessage, warningColor)
     end)
 end
 
@@ -189,13 +195,20 @@ if DebugMode then
 end
 
 if IsModEnabled then
-    RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
-        SetInfiniteGearChargeState(not InfiniteGearCharge)
-    end)
+    if not isDedicatedServer then
+        -- Hotkeys don't work on dedicated server --
+        RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
+            SetInfiniteBatteryChargeState(not InfiniteBatteryCharge)
+        end)
 
-    RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
-        SetNoOverheatState(not NoOverheat)
-    end)
+        RegisterKeyBind(InfiniteGearChargeKey, InfiniteGearChargeKeyModifiers, function()
+            SetInfiniteGearChargeState(not InfiniteGearCharge)
+        end)
+
+        RegisterKeyBind(NoOverheatKey, NoOverheatKeyModifiers, function()
+            SetNoOverheatState(not NoOverheat)
+        end)
+    end
 
     LoopAsync(250, function()
         ExecuteInGameThread(function()
