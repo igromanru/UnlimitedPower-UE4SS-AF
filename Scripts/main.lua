@@ -39,7 +39,7 @@ local AFUtils = require("AFUtils.AFUtils")
 local isDedicatedServer = AFUtils.IsDedicatedServer()
 
 ModName = "UnlimitedPower"
-ModVersion = "2.4.4"
+ModVersion = "2.4.5"
 DebugMode = true
 IsModEnabled = true
 
@@ -55,21 +55,21 @@ local function UpdateBatteryStateHook(Context)
     local deployedBattery = Context:get() ---@type ADeployed_Battery_ParentBP_C
     
     if InfiniteBatteryCharge and deployedBattery.ChangeableData then
-        local liquidType = deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109
-        local liquidLevel = deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A
+        local liquidType = deployedBattery.ChangeableData.CurrentLiquid
+        local liquidLevel = deployedBattery.ChangeableData.LiquidLevel
         if liquidType == AFUtils.LiquidType.None or not deployedBattery.FreezeBatteryDrain or liquidLevel < deployedBattery.MaxBattery then
             deployedBattery.FreezeBatteryDrain = true
-            deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A = deployedBattery.MaxBattery
+            deployedBattery.ChangeableData.LiquidLevel = deployedBattery.MaxBattery
             if not AFUtils.IsEnergyLiquidType(liquidType) then
-                deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109 = AFUtils.LiquidType.Energy
+                deployedBattery.ChangeableData.CurrentLiquid = AFUtils.LiquidType.Energy
             end
             
             if DebugMode then
                 LogDebug("[UpdateBatteryState] called:")
                 LogDebug("Liquid type: " .. liquidType)
                 LogDebug("LiquidLevel: " .. liquidLevel)
-                LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid_19_3E1652F448223AAE5F405FB510838109)
-                LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel_46_D6414A6E49082BC020AADC89CC29E35A)
+                LogDebug("Set Liquid type: " .. deployedBattery.ChangeableData.CurrentLiquid)
+                LogDebug("Set LiquidLevel: " .. deployedBattery.ChangeableData.LiquidLevel)
                 LogDebug("FreezeBatteryDrain: " .. tostring(deployedBattery.FreezeBatteryDrain))
                 LogDebug("------------------------------")
             end
@@ -89,14 +89,16 @@ end
 local function RemoveOverheat(playerCharacter)
     if playerCharacter:IsValid() and playerCharacter.Gear_BackpackBP:IsValid() then
         local jetpack = playerCharacter.Gear_BackpackBP
+        ---@cast jetpack AGear_Jetpack_BP_C
         if jetpack.CurrentOverheatLevel then
             jetpack.CurrentOverheatLevel = 0.0
         end
-        if jetpack.OverheatAmountOnUse then
-            jetpack.OverheatAmountOnUse = 0.0
-        end
         if jetpack.OverheatRate then
             jetpack.OverheatRate = 0.0
+        end
+        ---@cast jetpack AGear_JumpPack_C
+        if jetpack.OverheatAmountOnUse then
+            jetpack.OverheatAmountOnUse = 0.0
         end
     end
 end
@@ -195,6 +197,8 @@ if DebugMode then
 end
 
 if IsModEnabled then
+    WaitForTheGameToBeFullyLoaded()
+
     if not isDedicatedServer then
         -- Hotkeys don't work on dedicated server --
         RegisterKeyBind(InfiniteBatteryChargeKey, InfiniteBatteryChargeKeyModifiers, function()
